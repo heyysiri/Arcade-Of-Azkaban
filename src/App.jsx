@@ -1,6 +1,38 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Clock, Target } from 'lucide-react';
-import snitchImage from './assets/snitch.jpg';
+import snitchImage from './assets/snitch.png';
+import HarryPotterBroom from './assets/harry_potter_broom.png';
+
+const HarryCursor = () => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const updatePosition = (e) => {
+      setPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', updatePosition);
+    return () => window.removeEventListener('mousemove', updatePosition);
+  }, []);
+
+  const cursorStyle = {
+    position: 'fixed',
+    width: '150px',  // Increased size
+    height: '150px', // Increased size
+    backgroundImage: `url(${HarryPotterBroom})`,
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    transform: 'translate(-50%, -50%)', // Center the image on the cursor
+    top: position.y,
+    left: position.x,
+    zIndex: 100,
+    pointerEvents: 'none', // Ensure cursor doesn't interfere with clicks
+    filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))' // Optional: add a slight shadow
+  };
+  
+
+  return <div style={cursorStyle}></div>;
+};
 
 const App = () => {
   const [score, setScore] = useState(0);
@@ -18,12 +50,21 @@ const App = () => {
     textShadow: '2px 2px #000000'
   };
 
+  // Pixel-style scoreboard background
+  const scoreboardStyle = {
+    backgroundColor: '#1A237E',
+    border: '4px solid #000',
+    boxShadow: '4px 4px 0 #FFD700',
+    padding: '10px',
+    borderRadius: '8px'
+  };
+
   // Randomize snitch position
   const moveSnitchRandomly = useCallback(() => {
     if (gameOver) return;
 
-    const snitchWidth = 60; // Width of the snitch element
-    const snitchHeight = 60; // Height of the snitch element
+    const snitchWidth = 60;
+    const snitchHeight = 60;
     const maxWidth = window.innerWidth - snitchWidth;
     const maxHeight = window.innerHeight - snitchHeight;
 
@@ -107,10 +148,12 @@ const App = () => {
         backgroundColor: '#000080',
         backgroundImage: 'repeating-linear-gradient(#00000033 0 1px, transparent 1px 100%)',
         backgroundSize: '100% 4px',
-        cursor: 'crosshair'
+        cursor: 'none' // Hide default cursor
       }}
     >
+      {/* Pixelated Hogwarts Background */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        {/* Castle Silhouette */}
         <div 
           className="absolute bottom-0 left-0 w-full h-[30%] bg-black opacity-30"
           style={{
@@ -118,13 +161,15 @@ const App = () => {
           }}
         />
 
+        {/* Pixelated Stars */}
         {[...Array(50)].map((_, i) => (
           <div 
             key={i}
-            className="absolute bg-white rounded-full"
+            className="absolute bg-white"
             style={{
-              width: '2px',
-              height: '2px',
+              width: '4px',
+              height: '4px',
+              imageRendering: 'pixelated',
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               opacity: Math.random()
@@ -133,7 +178,11 @@ const App = () => {
         ))}
       </div>
 
-      <div className="absolute top-4 left-4 flex flex-col z-20" style={pixelFont}>
+      {/* Pixel Scoreboard */}
+      <div 
+        className="absolute top-4 left-4 flex flex-col z-20" 
+        style={{...pixelFont, ...scoreboardStyle}}
+      >
         <div className="flex items-center space-x-2 mb-2">
           <Clock size={24} color="#00ff00" />
           <span>Time: {timeLeft}s</span>
@@ -144,6 +193,7 @@ const App = () => {
         </div>
       </div>
 
+      {/* Snitch */}
       {snitchVisible && !gameOver && (
         <div
           onClick={handleSnitchClick}
@@ -151,15 +201,17 @@ const App = () => {
           style={{
             top: snitchPosition.top,
             left: snitchPosition.left,
-            width: '60px',
-            height: '60px',
+            width: '100px',
+            height: '100px',
             backgroundImage: `url(${snitchImage})`,
             backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat'
+            backgroundRepeat: 'no-repeat',
+            imageRendering: 'pixelated'
           }}
         />
       )}
 
+      {/* Game Over Overlay */}
       {gameOver && (
         <div 
           className="fixed inset-0 flex flex-col items-center justify-center z-50"
@@ -179,6 +231,9 @@ const App = () => {
           </button>
         </div>
       )}
+
+      {/* Harry Cursor */}
+      <HarryCursor />
     </div>
   );
 };
