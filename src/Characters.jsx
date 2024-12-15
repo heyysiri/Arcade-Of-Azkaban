@@ -1,7 +1,16 @@
 //import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Star } from 'lucide-react';
-
+import SideBarRight from './sidebarright';
+import SidebarLeft from './sidebarleft';
+import HarryImage from './assets/p_harry.jpg'
+import Hermione from './assets/p_hermione.png'
+import Ron from './assets/p_ron.png'
+import Dumbledore from './assets/p_dumbledore.png'
+import Snape from './assets/p_snape.png'
+import Draco from './assets/p_draco.png'
+import Luna from './assets/p_luna.png'
+import Neville from './assets/p_neville.png'
 const CharactersPage = () => {
   const characters = [
     { 
@@ -11,7 +20,7 @@ const CharactersPage = () => {
       house: "Gryffindor",
       bestFriends: "Ron & Hermione",
       favoriteSubject: "Defense Against the Dark Arts",
-      imageUrl: "/api/placeholder/200/250"
+      imageUrl: `${HarryImage}`
     },
     { 
       name: "Hermione Granger", 
@@ -20,7 +29,7 @@ const CharactersPage = () => {
       house: "Gryffindor",
       bestFriends: "Harry & Ron",
       favoriteSubject: "Arithmancy",
-      imageUrl: "/api/placeholder/200/250"
+      imageUrl: `${Hermione}`
     },
     { 
       name: "Ron Weasley", 
@@ -29,7 +38,7 @@ const CharactersPage = () => {
       house: "Gryffindor",
       bestFriends: "Harry & Hermione",
       favoriteSubject: "Care of Magical Creatures",
-      imageUrl: "/api/placeholder/200/250"
+      imageUrl: `${Ron}`
     },
     { 
       name: "Albus Dumbledore", 
@@ -38,7 +47,7 @@ const CharactersPage = () => {
       house: "Gryffindor (Alumni)",
       bestFriends: "Magical Creatures",
       favoriteSubject: "Transfiguration",
-      imageUrl: "/api/placeholder/200/250"
+      imageUrl: `${Dumbledore}`
     },
     { 
       name: "Severus Snape", 
@@ -47,7 +56,7 @@ const CharactersPage = () => {
       house: "Slytherin",
       bestFriends: "None (Complicated!)",
       favoriteSubject: "Potions",
-      imageUrl: "/api/placeholder/200/250"
+      imageUrl: `${Snape}`
     },
     { 
       name: "Draco Malfoy", 
@@ -56,7 +65,7 @@ const CharactersPage = () => {
       house: "Slytherin",
       bestFriends: "Crabbe & Goyle",
       favoriteSubject: "Dark Arts",
-      imageUrl: "/api/placeholder/200/250"
+      imageUrl: `${Draco}`
     },
     { 
       name: "Luna Lovegood", 
@@ -65,53 +74,17 @@ const CharactersPage = () => {
       house: "Ravenclaw",
       bestFriends: "Ginny Weasley",
       favoriteSubject: "Care of Magical Creatures",
-      imageUrl: "/api/placeholder/200/250"
+      imageUrl: `${Luna}`
     },
     { 
       name: "Neville Longbottom", 
-      quote: 'I will fight you!',
+      quote: '"I will fight you!"',
       description: "The ultimate underdog who becomes a hero! Clumsy but brave Gryffindor who grows from scared kid to legendary wizard. Defeats Nagini in the final battle!",
       house: "Gryffindor",
       bestFriends: "Herbology Club",
       favoriteSubject: "Herbology",
-      imageUrl: "/api/placeholder/200/250"
-    },
-    { 
-      name: "Ginny Weasley", 
-      quote: '"Shut up!"',
-      description: "Fierce Gryffindor and Harry's future wife! Powerful witch who breaks out of her shy shell. Quidditch star and ultimate badass with six awesome brothers!",
-      house: "Gryffindor",
-      bestFriends: "Luna Lovegood",
-      favoriteSubject: "Charms",
-      imageUrl: "/api/placeholder/200/250"
-    },
-    { 
-      name: "Fred & George Weasley", 
-      quote: '"Mischief Managed!"',
-      description: "Hogwarts' ultimate pranksters! Twin wizards who turn school into a comedy show. Creators of Weasleys' Wizard Wheezes. Always causing magical chaos!",
-      house: "Gryffindor",
-      bestFriends: "Each Other",
-      favoriteSubject: "Anything But Classes",
-      imageUrl: "/api/placeholder/200/250"
-    },
-    { 
-        name: "Ginny Weasley", 
-        quote: '"Shut up!"',
-        description: "Fierce Gryffindor and Harry's future wife! Powerful witch who breaks out of her shy shell. Quidditch star and ultimate badass with six awesome brothers!",
-        house: "Gryffindor",
-        bestFriends: "Luna Lovegood",
-        favoriteSubject: "Charms",
-        imageUrl: "/api/placeholder/200/250"
-      },
-      { 
-        name: "Fred & George Weasley", 
-        quote: '"Mischief Managed!"',
-        description: "Hogwarts' ultimate pranksters! Twin wizards who turn school into a comedy show. Creators of Weasleys' Wizard Wheezes. Always causing magical chaos!",
-        house: "Gryffindor",
-        bestFriends: "Each Other",
-        favoriteSubject: "Anything But Classes",
-        imageUrl: "/api/placeholder/200/250"
-      }
+      imageUrl: `${Neville}`
+    }
   ];
 
   return (
@@ -121,22 +94,20 @@ const CharactersPage = () => {
     >
       {/* Retro Header */}
       <header 
-        className="bg-[#008080] text-white p-4 
+        className="bg-pink-600 text-white p-4 
         w-full max-w-4xl text-center mb-6
         border-4 border-white border-b-[#808080] border-r-[#808080]"
       >
         <h1 className="text-4xl font-bold tracking-wider uppercase">
           Hogwarts Character Encyclopedia 🧙‍♂️
         </h1>
-        <p className="text-xs mt-2">
-          * Last Updated: Summer Vacation 1999 * Totally Magical! *
-        </p>
       </header>
-
+      <SidebarLeft />
+      <SideBarRight />
       {/* Characters Grid */}
       <main 
         className="grid grid-cols-4 gap-4 
-        w-[80%] max-auto"
+        w-[70%] max-auto"
       >
         {characters.map((character, index) => (
           <div 
@@ -154,12 +125,16 @@ const CharactersPage = () => {
               <Star className="w-6 h-6 text-[#008080]" />
             </div>
             <div className="text-center mb-2">
-              <div className="w-32 h-40 mx-auto bg-[#C0C0C0] flex items-center justify-center mb-2">
-                <p className="text-xs text-gray-600">Character Image</p>
+              <div className="w-32 h-40 mx-auto flex items-center justify-center mb-2">
+              <img
+            src={character.imageUrl} // Correctly use imageUrl for each character
+            alt={character.name}
+            className="w-full h-full object-cover"
+          />
               </div>
             </div>
             <p className="text-xs italic mb-2 text-center">
-              `{character.quote}`
+              {character.quote}
             </p>
             <p className="text-xs mb-2 text-gray-600">
               {character.description}
@@ -179,12 +154,12 @@ const CharactersPage = () => {
           to="/" 
           className="pixel-button mr-4"
         >
-          Back to Wizard World
+          Back to Mainpage
         </Link>
         <div className="text-xs mt-4">
-          🌟 Magical Webmaster: Harry P. © 1999 🌟
+          🌟 MAGICAL MEMORIES © 1999 🌟
           <br />
-          <marquee>Under magical construction! Best viewed with Netscape Navigator!</marquee>
+          <marquee>Under construction! Best viewed with Netscape Navigator!</marquee>
         </div>
       </footer>
 

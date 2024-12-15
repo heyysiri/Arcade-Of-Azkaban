@@ -1,7 +1,41 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Clock, Target } from 'lucide-react';
+import { Clock, Target, ChevronLeft } from 'lucide-react';
 import snitchImage from './assets/snitch.png';
 import HarryPotterBroom from './assets/harry_potter_broom.png';
+import { useNavigate } from 'react-router-dom';
+
+// Pixel Button CSS
+const pixelButtonStyles = `
+  .pixel-button {
+    font-family: 'Press Start 2P', cursive;
+    border: 2px solid #000;
+    background-color: #A0A0A0;
+    box-shadow: 3px 3px 0 #4A4A4A;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    space-x: 2;
+    padding: 0.5rem;
+    margin: 0.25rem;
+  }
+
+  .pixel-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #4A4A4A;
+  }
+
+  .pixel-button-active {
+    background-color: #00ff00;
+    color: #000;
+  }
+
+  .pixel-button-inactive {
+    background-color: #808080;
+    color: #FFFFFF;
+  }
+`;
 
 const HarryCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -17,19 +51,18 @@ const HarryCursor = () => {
 
   const cursorStyle = {
     position: 'fixed',
-    width: '150px',  // Increased size
-    height: '150px', // Increased size
+    width: '150px',
+    height: '150px',
     backgroundImage: `url(${HarryPotterBroom})`,
     backgroundSize: 'contain',
     backgroundRepeat: 'no-repeat',
-    transform: 'translate(-50%, -50%)', // Center the image on the cursor
+    transform: 'translate(-50%, -50%)', 
     top: position.y,
     left: position.x,
     zIndex: 100,
-    pointerEvents: 'none', // Ensure cursor doesn't interfere with clicks
-    filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))' // Optional: add a slight shadow
+    pointerEvents: 'none',
+    filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.5))'
   };
-  
 
   return <div style={cursorStyle}></div>;
 };
@@ -40,14 +73,16 @@ const SnitchGame = () => {
   const [snitchPosition, setSnitchPosition] = useState({ top: '0px', left: '0px' });
   const [snitchVisible, setSnitchVisible] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const snitchTimerRef = useRef(null);
   const gameTimerRef = useRef(null);
+  const navigate = useNavigate();
 
   // Retro pixel font
   const pixelFont = {
     fontFamily: "'Press Start 2P', cursive",
-    color: '#00ff00',
-    textShadow: '2px 2px #000000'
+    color: '#ff0000',
+   // textShadow: '2px 2px #000000'
   };
 
   // Pixel-style scoreboard background
@@ -61,7 +96,7 @@ const SnitchGame = () => {
 
   // Randomize snitch position
   const moveSnitchRandomly = useCallback(() => {
-    if (gameOver) return;
+    if (gameOver || !gameStarted) return;
 
     const snitchWidth = 60;
     const snitchHeight = 60;
@@ -82,11 +117,11 @@ const SnitchGame = () => {
     snitchTimerRef.current = setTimeout(() => {
       setSnitchVisible(false);
     }, 1000);
-  }, [gameOver]);
+  }, [gameOver, gameStarted]);
 
   // Handle snitch click
   const handleSnitchClick = () => {
-    if (snitchVisible && !gameOver) {
+    if (snitchVisible && gameStarted && !gameOver) {
       setScore(prevScore => prevScore + 1);
       setSnitchVisible(false);
     }
@@ -98,28 +133,30 @@ const SnitchGame = () => {
       clearInterval(gameTimerRef.current);
     }
 
-    gameTimerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(gameTimerRef.current);
-          setGameOver(true);
-          setSnitchVisible(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    if (gameStarted) {
+      gameTimerRef.current = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(gameTimerRef.current);
+            setGameOver(true);
+            setSnitchVisible(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
 
     return () => {
       if (gameTimerRef.current) {
         clearInterval(gameTimerRef.current);
       }
     };
-  }, [gameOver]);
+  }, [gameStarted, gameOver]);
 
   // Periodic snitch movement
   useEffect(() => {
-    if (!gameOver && timeLeft > 0) {
+    if (gameStarted && !gameOver && timeLeft > 0) {
       moveSnitchRandomly();
 
       const periodicTimer = setInterval(moveSnitchRandomly, 1000);
@@ -131,7 +168,7 @@ const SnitchGame = () => {
         }
       };
     }
-  }, [gameOver, timeLeft, moveSnitchRandomly]);
+  }, [gameStarted, gameOver, timeLeft, moveSnitchRandomly]);
 
   // Restart game
   const restartGame = () => {
@@ -139,102 +176,171 @@ const SnitchGame = () => {
     setTimeLeft(15);
     setGameOver(false);
     setSnitchVisible(false);
+    setGameStarted(false);
   };
 
-  return (
-    <div 
-      className="fixed inset-0 w-screen h-screen overflow-hidden"
-      style={{
-        backgroundColor: '#000080',
-        backgroundImage: 'repeating-linear-gradient(#00000033 0 1px, transparent 1px 100%)',
-        backgroundSize: '100% 4px',
-        cursor: 'none' // Hide default cursor
-      }}
-    >
-      {/* Pixelated Hogwarts Background */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        {/* Castle Silhouette */}
+  // Back to main page
+  const goToMainPage = () => {
+    navigate('/');
+  };
+
+  // If game hasn't started, show intro screen
+  if (!gameStarted) {
+    return (
+      <>
+        <style>{pixelButtonStyles}</style>
         <div 
-          className="absolute bottom-0 left-0 w-full h-[30%] bg-black opacity-30"
+          className="fixed inset-0 w-screen h-screen overflow-hidden flex items-center justify-center"
           style={{
-            clipPath: 'polygon(0% 100%, 0% 50%, 10% 60%, 20% 50%, 30% 60%, 40% 50%, 50% 65%, 60% 50%, 70% 60%, 80% 50%, 90% 65%, 100% 50%, 100% 100%)'
-          }}
-        />
-
-        {/* Pixelated Stars */}
-        {[...Array(50)].map((_, i) => (
-          <div 
-            key={i}
-            className="absolute bg-white"
-            style={{
-              width: '4px',
-              height: '4px',
-              imageRendering: 'pixelated',
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random()
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Pixel Scoreboard */}
-      <div 
-        className="absolute top-4 left-4 flex flex-col z-20" 
-        style={{...pixelFont, ...scoreboardStyle}}
-      >
-        <div className="flex items-center space-x-2 mb-2">
-          <Clock size={24} color="#00ff00" />
-          <span>Time: {timeLeft}s</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Target size={24} color="#00ff00" />
-          <span>Score: {score}</span>
-        </div>
-      </div>
-
-      {/* Snitch */}
-      {snitchVisible && !gameOver && (
-        <div
-          onClick={handleSnitchClick}
-          className="absolute cursor-pointer hover:scale-110 transition-transform z-30 animate-pulse"
-          style={{
-            top: snitchPosition.top,
-            left: snitchPosition.left,
-            width: '100px',
-            height: '100px',
-            backgroundImage: `url(${snitchImage})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            imageRendering: 'pixelated'
-          }}
-        />
-      )}
-
-      {/* Game Over Overlay */}
-      {gameOver && (
-        <div 
-          className="fixed inset-0 flex flex-col items-center justify-center z-50"
-          style={{
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            ...pixelFont
+            backgroundColor: '#000080',
+            backgroundImage: 'repeating-linear-gradient(#00000033 0 1px, transparent 1px 100%)',
+            backgroundSize: '100% 4px'
           }}
         >
-          <h1 className="text-4xl mb-8">GAME OVER</h1>
-          <p className="text-2xl mb-4">Your Score: {score}</p>
-          <button 
-            onClick={restartGame}
-            className="px-6 py-3 bg-green-500 text-black hover:bg-green-400 transition-colors"
-            style={pixelFont}
+          <div 
+            className="p-8 text-center"
+            style={{
+              backgroundColor: '#A0A0A0',
+              border: '4px solid #000',
+              boxShadow: '8px 8px 0 #4A4A4A',
+              maxWidth: '600px',
+              ...pixelFont
+            }}
           >
-            RESTART GAME
-          </button>
+            <h1 className="text-3xl mb-6">Escape from Azkaban!</h1>
+            <p className="mb-8 text-lg">Help Harry catch snitches to free Sirius Black from Azkaban! The more Snitches you catch, the closer Sirius gets to freedom. Can you help Harry save his godfather?</p>
+            <div className="flex space-x-4">
+            <button 
+              onClick={() => setGameStarted(true)}
+              className="pixel-button pixel-button-active"
+            >
+              Start Game
+            </button>
+            <button 
+                onClick={goToMainPage}
+                className="pixel-button pixel-button-inactive"
+              >
+                <ChevronLeft size={20} /> Main Page
+              </button>
+              </div>
+          </div>
         </div>
-      )}
+      </>
+    );
+  }
 
-      {/* Harry Cursor */}
-      <HarryCursor />
-    </div>
+  return (
+    <>
+      <style>{pixelButtonStyles}</style>
+      <div 
+        className="fixed inset-0 w-screen h-screen overflow-hidden"
+        style={{
+          backgroundColor: '#000080',
+          backgroundImage: 'repeating-linear-gradient(#00000033 0 1px, transparent 1px 100%)',
+          backgroundSize: '100% 4px',
+          cursor: 'none'
+        }}
+      >
+        {/* Pixelated Hogwarts Background */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          {/* Castle Silhouette */}
+          <div 
+            className="absolute bottom-0 left-0 w-full h-[30%] bg-black opacity-30"
+            style={{
+              clipPath: 'polygon(0% 100%, 0% 50%, 10% 60%, 20% 50%, 30% 60%, 40% 50%, 50% 65%, 60% 50%, 70% 60%, 80% 50%, 90% 65%, 100% 50%, 100% 100%)'
+            }}
+          />
+
+          {/* Pixelated Stars */}
+          {[...Array(50)].map((_, i) => (
+            <div 
+              key={i}
+              className="absolute bg-white"
+              style={{
+                width: '4px',
+                height: '4px',
+                imageRendering: 'pixelated',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                opacity: Math.random()
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Pixel Scoreboard */}
+        <div 
+          className="absolute top-4 left-4 flex flex-col z-20" 
+          style={{...pixelFont, ...scoreboardStyle}}
+        >
+          <div className="flex items-center space-x-2 mb-2">
+            <Clock size={24} color="#00ff00" />
+            <span>Time: {timeLeft}s</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Target size={24} color="#00ff00" />
+            <span>Score: {score}</span>
+          </div>
+        </div>
+
+        {/* Snitch */}
+        {snitchVisible && !gameOver && (
+          <div
+            onClick={handleSnitchClick}
+            className="absolute cursor-pointer hover:scale-110 transition-transform z-30 animate-pulse"
+            style={{
+              top: snitchPosition.top,
+              left: snitchPosition.left,
+              width: '100px',
+              height: '100px',
+              backgroundImage: `url(${snitchImage})`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              imageRendering: 'pixelated'
+            }}
+          />
+        )}
+
+        {/* Game Over Overlay */}
+        {gameOver && (
+          <div 
+            className="fixed inset-0 flex flex-col items-center justify-center z-50"
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              ...pixelFont
+            }}
+          >
+            <h1 className="text-4xl mb-8">GAME OVER</h1>
+            <p className="text-2xl mb-4">Your Score: {score}</p>
+            <div className="flex space-x-4">
+              <button 
+                onClick={restartGame}
+                className="pixel-button pixel-button-active"
+              >
+                Restart Game
+              </button>
+              <button 
+                onClick={goToMainPage}
+                className="pixel-button pixel-button-inactive"
+              >
+                <ChevronLeft size={20} /> Main Page
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Main Page Button */}
+        <button 
+          onClick={goToMainPage}
+          className="absolute bottom-4 left-4 z-50 pixel-button pixel-button-inactive"
+        >
+          <ChevronLeft size={20} /> Main Page
+        </button>
+
+        {/* Harry Cursor */}
+        <HarryCursor />
+      </div>
+    </>
   );
 };
 

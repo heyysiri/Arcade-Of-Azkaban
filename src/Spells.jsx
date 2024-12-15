@@ -1,82 +1,109 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
-
+import SideBarRight from './sidebarright';
+import SidebarLeft from './sidebarleft';
 const SpellsPage = () => {
   const spells = [
     { 
-      name: "Expelliarmus", 
-      description: "Ron & Harry's favorite spell! Disarms your opponent and sends their wand flying! As seen in the Chamber of Secrets! 🪄", 
-      discoveredBy: "Unknown Wizard",
-      firstAppearance: "Hogwarts Dueling Club"
+      name: "Avada Kedavra", 
+      description: "The Killing Curse! A spell that instantly kills anyone it touches. One of the three Unforgivable Curses, it leaves a green flash in its wake. 💀", 
+      discoveredBy: "Dark Wizards",
+      firstAppearance: "Used by Voldemort in the Forbidden Forest to kill Harry’s parents"
     },
     { 
-      name: "Patronus Charm", 
-      description: "The ultimate defense against Dementors! Harry learns this advanced spell from Professor Lupin. So cool! 😱", 
-      discoveredBy: "Professor Remus Lupin",
-      firstAppearance: "Defense Against the Dark Arts Class"
+      name: "Crucio", 
+      description: "The Cruciatus Curse! Causes excruciating pain to the victim, used to torture and break wills. One of the Unforgivable Curses. 😈", 
+      discoveredBy: "Dark Arts Masters",
+      firstAppearance: "Used by Bellatrix Lestrange on Neville Longbottom at Malfoy Manor"
     },
     { 
-      name: "Wingardium Leviosa", 
-      description: "Make objects float! Hermione was TOTALLY right about the pronunciation. Swish and flick! 🧙‍♀️", 
-      discoveredBy: "Professor Flitwick",
-      firstAppearance: "Charms Class"
+      name: "Imperius", 
+      description: "The Imperius Curse! Controls the victim’s mind, bending them to the caster’s will. Use it, and you could lose yourself too. 🧠", 
+      discoveredBy: "Dark Wizards",
+      firstAppearance: "Used by Barty Crouch Jr. on Viktor Krum during the Triwizard Tournament"
     },
     { 
-      name: "Alohomora", 
-      description: "The Unlocking Charm! Perfect for sneaking around Hogwarts and solving magical mysteries! 🔑", 
-      discoveredBy: "Ancient Wizarding Families",
-      firstAppearance: "Unknown"
+      name: "Morsmordre", 
+      description: "The Dark Mark! A terrifying symbol of Voldemort’s Death Eaters, summoned into the sky to signal terror. ☠️", 
+      discoveredBy: "Lord Voldemort",
+      firstAppearance: "Summoned by Death Eaters at the Quidditch World Cup"
     },
     { 
-      name: "Lumos", 
-      description: "Light up your wand like a magical flashlight! Super useful in dark corridors and forbidden areas! 💡", 
-      discoveredBy: "Wandlore Experts",
-      firstAppearance: "Standard First-Year Spell"
+      name: "Sectumsempra", 
+      description: "A dangerous curse that cuts deep, causing severe wounds. It’s dark magic that leaves victims bleeding and broken. ⚔️", 
+      discoveredBy: "Severus Snape (Half-Blood Prince)",
+      firstAppearance: "Used by Harry in the bathroom during his duel with Draco Malfoy"
     },
     { 
-      name: "Riddikulus", 
-      description: "Turn scary boggarts into hilarious jokes! Professor Lupin's BEST lesson EVER! Laughter defeats fear! 😂", 
-      discoveredBy: "Defense Against the Dark Arts Curriculum",
-      firstAppearance: "Hogwarts Defensive Magic"
+      name: "Dolohov's Curse", 
+      description: "A spell known for causing death or severe injury with a single blast. It’s incredibly dark and dangerous. 💥", 
+      discoveredBy: "Antonin Dolohov",
+      firstAppearance: "Used by Dolohov in the Battle of the Department of Mysteries"
     },
     { 
-      name: "Accio", 
-      description: "Summon ANY object from a distance! Harry uses this ALL the time. So convenient! 🏠", 
-      discoveredBy: "Advanced Summoning Wizards",
-      firstAppearance: "Triwizard Tournament"
+      name: "Fiendfyre", 
+      description: "A magical fire that’s uncontrollable and can destroy anything in its path. A dangerous force of nature that burns through everything. 🔥", 
+      discoveredBy: "Ancient Dark Magic",
+      firstAppearance: "Unleashed by Vincent Crabbe in the Room of Requirement"
     },
     { 
-      name: "Expecto Patronum", 
-      description: "Create a magical guardian to fight Dementors! Only the most POWERFUL wizards can do this! ✨", 
-      discoveredBy: "Professor Lupin",
-      firstAppearance: "Dementor Defense Training"
+      name: "Reducto", 
+      description: "The Blasting Curse! This spell causes objects to explode with violent force, and it can be deadly if aimed at a person. 💣", 
+      discoveredBy: "Dark Wizards",
+      firstAppearance: "Used by Bellatrix Lestrange during the Battle of the Department of Mysteries"
+    },
+    { 
+      name: "Confringo", 
+      description: "The Blasting Curse! Similar to Reducto, it’s used to destroy objects and can cause deadly explosions. Dangerous in the wrong hands. 💥", 
+      discoveredBy: "Dark Wizards",
+      firstAppearance: "Used by Death Eaters during the Battle of Hogwarts"
+    },
+    { 
+      name: "Obliviate", 
+      description: "The Memory Charm! Used to erase memories, sometimes to cover up dark deeds. While not deadly, it’s ethically questionable. 🧠", 
+      discoveredBy: "Wizarding Memory Experts",
+      firstAppearance: "Hermione uses it on her parents to protect them from Voldemort's forces"
+    },
+    { 
+      name: "Carpe Retractum", 
+      description: "A spell that pulls objects or people toward you with a magical rope-like force. While not fatal, it’s often used for dark and dangerous purposes. 🪢", 
+      discoveredBy: "Dark Wizards",
+      firstAppearance: "Used by Draco Malfoy on Harry during the Battle of Hogwarts"
+    },
+    { 
+      name: "Langlock", 
+      description: "A spell that locks someone’s tongue to the roof of their mouth, rendering them speechless. Not fatal, but it can be humiliating. 🙊", 
+      discoveredBy: "Dark Wizards",
+      firstAppearance: "Used by Draco Malfoy on Harry during their encounter in the bathroom"
     }
-  ];
+];
+
 
   return (
     <div 
-      className="w-screen h-screen bg-[#C0C0C0] text-black 
+      className="w-full min-h-screen bg-[#C0C0C0] text-black 
       font-['MS_Sans_Serif'] p-4 flex flex-col items-center"
     >
       {/* Retro Header */}
       <header 
-        className="bg-[#008080] text-white p-4 
+        className="bg-pink-600 text-white p-4 
         w-full max-w-4xl text-center mb-6
         border-4 border-white border-b-[#808080] border-r-[#808080]"
       >
         <h1 className="text-4xl font-bold tracking-wider uppercase">
-          Harry Potter's Spell Book 🧙‍♂️
+        Curses & Chaos: The Dark Arts Unleashed 🧙‍♂️
         </h1>
         <p className="text-xs mt-2">
-          * Totally Magical * Last Updated: Summer Vacation 1999! *
+          * Totally Magical * Last Updated: Summer Vacation 1999!!
         </p>
       </header>
-
+      <SidebarLeft />
+      <SideBarRight />
       {/* Spells Grid */}
       <main 
         className="grid grid-cols-4 gap-4 
-        w-full max-w-4xl"
+        w-[70%] max-auto"
       >
         {spells.map((spell, index) => (
           <div 
@@ -110,12 +137,12 @@ const SpellsPage = () => {
           to="/" 
           className="pixel-button mr-4"
         >
-          Back to Wizard World
+          Back to mainpage
         </Link>
         <div className="text-xs mt-4">
-          🌟 Magical Webmaster: Harry P. © 1999 🌟
+        🌟 MAGICAL MEMORIES © 1999 🌟
           <br />
-          <marquee>Under magical construction! Best viewed with Netscape Navigator!</marquee>
+          <marquee>Under construction! Best viewed with Netscape Navigator!</marquee>
         </div>
       </footer>
 
